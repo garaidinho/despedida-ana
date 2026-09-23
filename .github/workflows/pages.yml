@@ -29,7 +29,7 @@ jobs:
           mkdir -p public
           cp index.html public/index.html
           python -m pip install --quiet gdown
-          gdown --fuzzy "https://drive.google.com/file/d/1spBzmheCy36f1OAHIv9Uaz-ZIq4sHD3N/view?usp=sharing" -O public/video.mp4
+          gdown "1spBzmheCy36f1OAHIv9Uaz-ZIq4sHD3N" -O public/video.mp4
           test -s public/video.mp4
 
       - name: Configurar GitHub Pages
