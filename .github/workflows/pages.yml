@@ -1,0 +1,47 @@
+name: Publicar despedida de Ana
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar web
+        run: |
+          mkdir -p public
+          cp index.html public/index.html
+          python -m pip install --quiet gdown
+          gdown --fuzzy "https://drive.google.com/file/d/1spBzmheCy36f1OAHIv9Uaz-ZIq4sHD3N/view?usp=sharing" -O public/video.mp4
+          test -s public/video.mp4
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Subir web
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4
