@@ -1,0 +1,17 @@
+name: Comprobar vídeo web
+on:
+  push:
+    paths:
+      - ".github/workflows/check-video.yml"
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar cabeceras
+        run: |
+          echo "=== HEAD ==="
+          curl -sS -I "https://garaidinho.github.io/despedida-ana/video.mp4" || true
+          echo "=== RANGE 0-1 ==="
+          curl -sS -D - -o /tmp/range.bin -H "Range: bytes=0-1" "https://garaidinho.github.io/despedida-ana/video.mp4" || true
+          echo "bytes_recibidos=$(wc -c < /tmp/range.bin)"
