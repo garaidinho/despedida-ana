@@ -24,13 +24,18 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Preparar web
+      - name: Preparar vídeo compatible
         run: |
           mkdir -p public
           cp index.html public/index.html
           python -m pip install --quiet gdown
-          gdown "1spBzmheCy36f1OAHIv9Uaz-ZIq4sHD3N" -O public/video.mp4
+          gdown "1spBzmheCy36f1OAHIv9Uaz-ZIq4sHD3N" -O /tmp/original.mp4
+          test -s /tmp/original.mp4
+
+          ffmpeg -hide_banner -loglevel error -y             -i /tmp/original.mp4             -map 0:v:0 -map 0:a:0             -c:v libx264 -preset veryfast -crf 21             -profile:v main -level:v 3.1 -pix_fmt yuv420p             -r 30 -fps_mode cfr             -maxrate 4M -bufsize 8M             -c:a aac -b:a 160k -ar 48000 -ac 2             -movflags +faststart             public/video.mp4
+
           test -s public/video.mp4
+          ffprobe -v error             -show_entries stream=codec_name,profile,level,pix_fmt,width,height             -of default=noprint_wrappers=1 public/video.mp4
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
